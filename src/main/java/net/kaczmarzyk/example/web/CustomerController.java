@@ -36,7 +36,22 @@ public class CustomerController {
     	customer.delete();
     	customerRepo.save(customer);
     }
-    
+
+    @GetMapping("/{customerLastName}/{customerFirstName}")
+    public Iterable<Customer> filterByName(
+            @And({@Spec(path = "firstName", pathVars = "customerFirstName", spec=Equal.class),
+                    @Spec(path = "lastName", pathVars = "customerLastName", spec=Equal.class)}) Specification<Customer> spec) {
+
+        return customerRepo.findAll(spec);
+    }
+
+    @GetMapping("/{customerLastName}")
+    public Iterable<Customer> filterByLastName(
+            @Spec(path = "lastName", pathVars = "customerLastName", spec=Equal.class) Specification<Customer> spec) {
+
+        return customerRepo.findAll(spec);
+    }
+
     @GetMapping(params = { "firstName" })
     public Iterable<Customer> filterCustomersByFirstName(
             @Spec(path = "firstName", spec = Like.class) NotDeletedCustomerSpecification spec) {
